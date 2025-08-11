@@ -1,6 +1,5 @@
 package com.cemre.product_backend.controller;
 
-
 import com.cemre.product_backend.model.entity.Product;
 import com.cemre.product_backend.service.ProductService;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "*") // frontend ile bağlantı için
+@CrossOrigin(origins = "*") // linking frontend
 public class ProductController {
 
     private final ProductService productService;
@@ -24,7 +23,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
+    public Product getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
     }
 

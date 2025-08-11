@@ -21,7 +21,7 @@ public class Product {
 
     private String category;
 
-    private String href = "";  // Opsiyonel, default boş
+    private String href = "";
 
     @Column(name = "image_src")
     private String imageSrc;

@@ -1,12 +1,11 @@
-package com.cemre.product_backend.service;
-
+package com.cemre.product_backend.service.impl;
 
 import com.cemre.product_backend.model.entity.Product;
 import com.cemre.product_backend.repository.ProductRepository;
+import com.cemre.product_backend.service.ProductService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -23,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(Integer id) {
         Optional<Product> product = productRepository.findById(id);
         return product.orElse(null);
     }
