@@ -7,10 +7,13 @@ import com.cemre.product_backend.repository.FavoriteRepository;
 import com.cemre.product_backend.repository.UserRepository;
 import com.cemre.product_backend.repository.ProductRepository;
 import com.cemre.product_backend.service.FavoriteService;
+import jakarta.transaction.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
-    @Service
+@Service
     public class FavoriteServiceImpl implements FavoriteService {
 
         private final FavoriteRepository favoriteRepository;
@@ -24,25 +27,59 @@ import java.util.List;
             this.userRepository = userRepository;
             this.productRepository = productRepository;
         }
-
+        @Override
         public List<Favorite> getUserFavorites(Integer userId) {
-            User user = userRepository.findById(userId).orElseThrow();
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found: ID " + userId));
+            // FavoriteRepository @EntityGraph prevents N+1
             return favoriteRepository.findByUser(user);
         }
 
-        public Favorite addFavorite(Integer userId, Integer id) {
-            User user = userRepository.findById(userId).orElseThrow();
-            Product product = productRepository.findById(id).orElseThrow();
+        @Override
+        @Transactional
+        public Favorite addFavorite(Integer userId, Integer productId) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found: ID " + userId));
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found: ID " + productId));
 
-            return favoriteRepository.findByUserAndProduct(user, product)
-                    .orElseGet(() -> favoriteRepository.save(new Favorite(null, user, product)));
+            try {
+                Favorite favorite = new Favorite();
+                favorite.setUser(user);
+                favorite.setProduct(product);
+                return favoriteRepository.save(favorite);
+            } catch (DataIntegrityViolationException e) {
+
+                throw new RuntimeException("Already favorited.", e);
+            }
+        }
+        @Override
+        @Transactional
+        public void removeFavorite(Integer userId, Integer productId) {
+
+            Optional<Favorite> favoriteOptional = favoriteRepository.findByUserAndProduct(
+                    userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found: ID " + userId)),
+                    productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found: ID " + productId))
+            );
+
+            if (favoriteOptional.isPresent()) {
+                favoriteRepository.delete(favoriteOptional.get());
+            } else {
+                throw new RuntimeException("Cannot found or already removed: User ID " + userId + ", Product ID " + productId);
+            }
         }
 
-        public void removeFavorite(Integer userId, Integer id) {
-            User user = userRepository.findById(userId).orElseThrow();
-            Product product = productRepository.findById(id).orElseThrow();
-            favoriteRepository.deleteByUserAndProduct(user, product);
+        //for frontend
+    @Override
+    public boolean isFavorite(Integer userId, Integer productId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        Optional<Product> productOptional = productRepository.findById(productId);
+
+        if (userOptional.isEmpty() || productOptional.isEmpty()) {
+            return false;
         }
+        return favoriteRepository.findByUserAndProduct(userOptional.get(), productOptional.get()).isPresent();
+    }
     }
 
 

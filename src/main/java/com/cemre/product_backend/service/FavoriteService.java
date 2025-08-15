@@ -11,4 +11,5 @@ public interface FavoriteService {
     public Favorite addFavorite(Integer userId, Integer id);
 
     public void removeFavorite(Integer userId, Integer id);
+    public boolean isFavorite(Integer userId, Integer productId);
 }

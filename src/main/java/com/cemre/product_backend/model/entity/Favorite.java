@@ -10,13 +10,16 @@ import lombok.*;
 @Entity
 @Table(
         name = "favorite",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "product_id"})
+        uniqueConstraints = {
+                // prevent duplication
+                @UniqueConstraint(columnNames = {"user_id", "product_id"})
+        }
 )
 public class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer favoriteId;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
