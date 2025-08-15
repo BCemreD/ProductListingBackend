@@ -9,22 +9,31 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id")
-        private Integer userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
-        @NotBlank
-        @Column(name = "first_name")
-        private String firstName;
+    @NotBlank
+    @Column(name = "username", unique = true)
+    private String username;
 
-        @NotBlank
-        @Column(name = "last_name")
-        private String lastName;
+    @NotBlank
+    @Column(name = "first_name")
+    private String firstName;
 
-        @NotBlank
-        private String password;
+    @NotBlank
+    @Column(name = "last_name")
+    private String lastName;
 
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String password;
+
+    private String role = "USER";
 }
