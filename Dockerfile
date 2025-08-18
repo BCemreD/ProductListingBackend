@@ -4,7 +4,7 @@ FROM eclipse-temurin:21-jdk-alpine
 # Set workdir
 WORKDIR /app
 
-# Copy entire project
+# Copy all project files
 COPY . .
 
 # Make mvnw executable
@@ -20,4 +20,4 @@ RUN ./mvnw clean package -DskipTests
 EXPOSE 8080
 
 # Run app
-CMD ["java", "-jar", "target/ProductListingBackend-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/product-backend-0.0.1-SNAPSHOT.jar"]
