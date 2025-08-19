@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "${FRONTEND_URL}")
 @RestController
 @RequestMapping("/api/favorites")
-@RequiredArgsConstructor // FavoriteService için constructor oluşturur
+@RequiredArgsConstructor
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    // Kullanıcının favorilerini getirir
+
     @GetMapping("/{userId}")
     public ResponseEntity<List<FavoriteDto>> getUserFavorites(@PathVariable Integer userId) {
         try {
