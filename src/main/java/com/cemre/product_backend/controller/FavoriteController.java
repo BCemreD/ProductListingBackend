@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/favorites")
-@RequiredArgsConstructor // FavoriteService için constructor oluşturur
+@RequiredArgsConstructor
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    // Kullanıcının favorilerini getirir
+
     @GetMapping("/{userId}")
     public ResponseEntity<List<FavoriteDto>> getUserFavorites(@PathVariable Integer userId) {
         try {
@@ -53,7 +53,7 @@ public class FavoriteController {
             );
             return new ResponseEntity<>(favoriteDto, HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            if (e.getMessage() != null && e.getMessage().contains("zaten favorilerinizde")) {
+            if (e.getMessage() != null && e.getMessage().contains("already favorited")) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
